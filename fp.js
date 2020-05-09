@@ -113,6 +113,13 @@ fp.inspect = a=>{console.dir(a,{depth:null}); return a;}
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 
+
+fp.tryIt = func=>onFail=>{
+	try{ let result =func(); return result; }
+	catch(e) { return onFail(e) }
+}
+
+
 fp.Maybe = value=>({_type:'Maybe',value})
 fp.Nothing = value=>({_type:'Nothing',value})
 fp.Just = value=>({_type:'Just',value})
