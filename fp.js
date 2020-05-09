@@ -105,7 +105,8 @@ fp.List = (...data)=>({
   data
 })
 
-fp.trace = what=>value=>{console.log(what,value); return value;}
+
+fp.trace = what=>value=>{ typeof(what)==='function'?console.log(what(value)):console.log(what,value); return value;}
 fp.log = what=>value=>{ console.log(what); return value; }
 fp.inspect = a=>{console.dir(a,{depth:null}); return a;}
 //////////////////////////////////////////////////////////////
@@ -119,6 +120,7 @@ fp.tryIt = func=>onFail=>{
 	catch(e) { return onFail(e) }
 }
 
+fp.counter = init=>()=>init++
 
 fp.Maybe = value=>({_type:'Maybe',value})
 fp.Nothing = value=>({_type:'Nothing',value})
