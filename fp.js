@@ -108,7 +108,7 @@ fp.List = (...data)=>({
 })
 
 
-fp.logToFile = fileName=>obj=>fs.writeFileSync(fileName, JSON.stringify(obj, null, 4));
+fp.logToFile = fileName=>obj=>{fs.writeFileSync(fileName, JSON.stringify(obj, null, 4)); return obj; }
 fp.trace = what=>value=>{ typeof(what)==='function'?console.log(what(value)):console.log(what,value); return value;}
 fp.log = what=>value=>{ console.log(what); return value; }
 fp.inspect = a=>{console.dir(a,{depth:null}); return a;}
