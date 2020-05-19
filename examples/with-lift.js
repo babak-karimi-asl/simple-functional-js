@@ -13,10 +13,10 @@ domIO.createElement = tag=>classString=>id=>fp.tryIO(()=>{
 	d.id = id
 	return d
 })
-domIO.appendChild = child=>parent=>fp.tryIO(()=>parent.appendChild(child))
+domIO.appendChild = child=>parent=>fp.tryIO(()=>(parent.appendChild(child),parent))
 
-domIO.LensOverId = over=>id=>elem=>fp.tryIO(()=>fp.compose( fp.chain(over),fp.tryIO(()=>elem.getElementById(id)) )({}))
 
+//domIO.LensOverId = over=>id=>elem=>fp.tryIO(()=>fp.compose( fp.chain(over),fp.tryIO(()=>elem.getElementById(id)) )({}))
 /*
 const createList = fp.curry((list,input)=>{
 	console.log('list is',list)
@@ -32,8 +32,26 @@ apRez.fork(
 	d=>console.log('DONE!>>>>>>>>',d),
 )
 */
+
 const todoList = domIO.createElement('div')('container')('todo-list')
 const todoInput = domIO.createElement('input')('input')('todo-input')
+const appender = fp.liftA2( domIO.appendChild )
+const appendToDoList = appender(todoList)
+const appendToDoInupt = appender(todoInput)
+
+const todoListCreate = fp.compose(
+appendToDoInupt,
+appendToDoList,
+domIO.getElementById,
+)('root')
+
+//let result = fp.liftA2( domIO.appendChild,todoList,domIO.getElementById('root')  )
+todoListCreate.fork(
+	(e)=>console.log('ERROR>>>>>>>>>',e),
+	()=>console.log('NULL>>>>>>>>'),
+	d=>console.log('DONEEEEE!>>>>>>>>',d)
+)
+
 
 
 
@@ -57,15 +75,6 @@ Container.of(2)
 //let result = fp.ap( domIO.getElementById('root') )(  fp.map( domIO.appendChild )( todoList )  )
 //result = fp.join(result)
 
-let result = fp.liftA2( domIO.appendChild,todoList  )
-
-result = result ( domIO.getElementById('root') )
-
-result.fork(
-	(e)=>console.log('ERROR>>>>>>>>>',e),
-	()=>console.log('NULL>>>>>>>>'),
-	d=>console.log('DONE!>>>>>>>>',d)
-)
 
 
 
@@ -101,11 +110,7 @@ liftResult.fork(
 )
 */
 /*
-const todoListCreate = fp.compose(
-fp.chain( domIO.appendChild(todoInput) ),
-fp.chain( domIO.appendChild(todoList) ),
-domIO.getElementById
-)('root')
+
 
 
 todoListCreate.fork(
