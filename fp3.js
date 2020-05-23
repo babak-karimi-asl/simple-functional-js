@@ -75,10 +75,9 @@ const requestForServer = base=>path=>data=>fp.IO(
 	      setTimeout(_=>{
 			  console.log('>>> requested >>>',data)
 			  //console.log(`response from server for path ${base}${path}`)
-	          if(Math.random()>0.5)
-	             successCallback(`<<< response  <<< ${base}${path}`)
-	          else 
-				   errorCallback(`<<<   ERROR   <<< ${base}${path}`)
+	          //if(Math.random()>0.5) 
+	          successCallback(`<<< response  <<< ${base}${path}`)
+	          //else  errorCallback(`<<<   ERROR   <<< ${base}${path}`)
 		  },2000)
 	}
 )
@@ -114,14 +113,14 @@ const getRoomsAndMessages = rooms=>messages1=>messages2=>messages3=>{
 
 
 
-let result = fp.lift(getRoomsAndMessages) 
+const parallellArgs = fp.lift(getRoomsAndMessages) 
                     ( roomsList({rooms:1}),messagesList({messages:1}),messagesList({messages:2}) )
                     ( messagesList({messages:3}) )
 
 
 
 let apiCall = ()=>{
-	result.fork(
+	parallellArgs.fork(
 		error=>{ setTimeout(apiCall,1000); console.log('error',error) },
 		_=>console.log('null returned'),
 		success=>console.log('success >>> ',success)
@@ -129,9 +128,25 @@ let apiCall = ()=>{
 }
 
 
-apiCall()
+//apiCall()
 
 //lift(getRoomsAndMessages) ( roomsList({rooms:1}),messagesList({messages:1}) )
+
+
+const partialParrallelArgs = fp.lift(getRoomsAndMessages) ( roomsList({rooms:1}),messagesList({messages:1}),messagesList({messages:2}) )
+
+const api2 = fp.compose(
+	//parallellArgs,
+	fp.chain(roomsList),
+	fp.chain(messagesList),
+	roomsList,
+)
+
+api2({hello:'world'}).fork(
+	error=>console.log('error2',error),
+	_=>console.log('null2'),
+	success=>console.log('success2',success)
+)
 
 
 /*
@@ -153,7 +168,7 @@ success=>console.log('success',success)
 )
 */
 
-setInterval(()=>console.log('0.5s...'),500)
+//setInterval(()=>console.log('0.5s...'),500)
 
 /*
 const promise1 = Promise.resolve(3);
